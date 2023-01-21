@@ -1,0 +1,9 @@
+.idea
+cmake-build-*
+.DS_Store
+abacad.lv2
+.build-plugin
+packages
+*.lv2
+*.tar.gz
+*.log
