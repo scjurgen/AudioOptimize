@@ -1,12 +1,14 @@
 #include "gtest/gtest.h"
 
 #include "FourStageFilter.h"
-#include <random>
-
 
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <random>
+
+namespace DspTest
+{
 
 // this class calculates the magnitude and phase response of the filter as theoretical values
 // the math for it is found here: https://expeditionelectronics.com/Diy/Polemixing/math
@@ -137,3 +139,5 @@ INSTANTIATE_TEST_SUITE_P(DSPFilter4StageTest, Filter4TheoreticalValues,
                          ::testing::Combine(testing::ValuesIn(filterTestSet), testing::Values(220.0, 440.0, 880.0),
                                             testing::Values(100.0, 200.0, 400.0, 800.0, 1600.0, 3200.0),
                                             testing::Values(0.0, 0.20, 0.50)));
+
+}

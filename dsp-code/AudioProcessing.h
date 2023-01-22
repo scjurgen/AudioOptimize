@@ -2,15 +2,16 @@
 
 #include <array>
 #include <cmath>
+#include <concepts>
 #include <numbers>
 
 namespace DSP
 {
 
 // render sine wave into buffer, if numChannels>1 the data is interleaved
-template <typename ValueType>
-inline void renderSine(std::vector<ValueType>& target, const float sampleRate, const float frequency,
-                       size_t numChannels = 1)
+template <std::floating_point ValueType>
+inline void renderSine(std::vector<ValueType>& target, const std::floating_point auto sampleRate,
+                       const std::floating_point auto frequency, size_t numChannels = 1)
 {
     if (numChannels == 0)
     {
@@ -19,7 +20,7 @@ inline void renderSine(std::vector<ValueType>& target, const float sampleRate, c
     class PgenData
     {
       public:
-        PgenData(size_t numChannels_, const float a_)
+        PgenData(size_t numChannels_, const ValueType a_)
             : numChannels(numChannels_)
             , a(a_)
         {
@@ -37,9 +38,9 @@ inline void renderSine(std::vector<ValueType>& target, const float sampleRate, c
 
       private:
         const size_t numChannels;
-        const float a;
+        const ValueType a;
         size_t channel{0};
-        std::array<float, 2> s{1.f, 0.f};
+        std::array<ValueType, 2> s{1.f, 0.f};
 
         void differential()
         {
@@ -47,7 +48,8 @@ inline void renderSine(std::vector<ValueType>& target, const float sampleRate, c
             s[1] = s[1] + a * s[0];
         }
     };
-    PgenData pGenData{numChannels, 2 * std::sin(static_cast<ValueType>(M_PI) * frequency / sampleRate)};
+    PgenData pGenData{numChannels,
+                      static_cast<ValueType>(2 * std::sin(std::numbers::pi_v<ValueType> * frequency / sampleRate))};
 
     std::generate_n(target.data(), target.size(), [pGenData]() mutable { return pGenData.next(); });
 }

@@ -10,8 +10,9 @@
 #include <cmath>
 #include <numbers>
 
-namespace OT_test
+namespace DspTest
 {
+
 static constexpr double maxDeltaDb = 0.15;
 
 inline void renderWithSineWave(std::vector<float>& target, const double sampleRate, const double frequency)

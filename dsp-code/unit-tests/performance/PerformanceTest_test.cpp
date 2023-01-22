@@ -5,6 +5,9 @@
 
 #include "DspPerformance.h"
 
+namespace DspPerformanceTest
+{
+
 TEST(DSP_PerformanceTest_tests, basicsTestsVariations)
 {
     class SUT
@@ -54,4 +57,5 @@ TEST(DSP_PerformanceTest_tests, basicsTestsVariations)
         //  as our multiplications in the runner are faster the error will be greater (doesn't scale linear)
         EXPECT_NEAR(deltaPercent, multiplicationsBase * 100 / multiplications, 10 * 5 / multiplications);
     }
+}
 }

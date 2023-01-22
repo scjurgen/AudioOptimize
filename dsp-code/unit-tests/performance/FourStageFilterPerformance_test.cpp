@@ -9,6 +9,9 @@
 #include <array>
 #include <cmath>
 
+namespace DspPerformanceTest
+{
+
 template <std::array<float, 5> f>
 class FourStageMultiFilter2
 {
@@ -239,4 +242,5 @@ TEST(FourPoleFilterPerformanceTest, compareOlder)
         std::cout << " (doing better)" << std::endl;
     }
     std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+}
 }

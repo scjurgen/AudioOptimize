@@ -4,13 +4,7 @@
 
 
 #include <numbers>
-static constexpr auto c_orchestraTuning = 440.f;
-static constexpr auto adjacentSemitoneProportion = 1.059463094359295f;
 
-static float musicalNoteToFrequency(const float note)
-{
-    return 440.f * std::pow(adjacentSemitoneProportion, note - 69);
-}
 
 class GeneratePlot
 {
@@ -18,10 +12,6 @@ class GeneratePlot
     GeneratePlot(const std::string& title)
         : plt(true)
     {
-        // plt.SetTerminal("dumb size 160,40");
-        // plt.SetOutput("biquad.txt");
-        plt.SetTerminal("svg size 800,600");
-        plt.SetOutput("biquad.svg");
         plt.SetTitle(title);
         plt.GnuplotCommand("set grid xtics, ytics");
         plt.GnuplotCommand("set key inside right bottom");
@@ -53,7 +43,7 @@ class GeneratePlot
         GnuPlot::Plot::Tics xTicks{};
         for (size_t o = FirstOctave; o < LastOctave; ++o)
         {
-            auto hz = musicalNoteToFrequency(static_cast<float>(o * 12));
+            const auto hz = musicalNoteToFrequency(static_cast<float>(o * 12));
             if (hz < 1000)
             {
                 std::stringstream hzString;
@@ -70,9 +60,9 @@ class GeneratePlot
 
             for (size_t i = 0; i < OctaveDivision; ++i)
             {
-                float d = 12.f * static_cast<float>(i) / static_cast<float>(OctaveDivision);
-                auto hz = musicalNoteToFrequency(static_cast<float>(o * 12 + d));
-                frequencies.push_back(hz);
+                const float d = 12.f * static_cast<float>(i) / static_cast<float>(OctaveDivision);
+                const auto f = musicalNoteToFrequency(static_cast<float>(o * 12 + d));
+                frequencies.push_back(f);
             }
         }
         plt.GnuplotCommand("set logscale x");
@@ -101,7 +91,7 @@ class GeneratePlot
 };
 
 
-int main(int ac, char* av[])
+int main(int, char*[])
 {
     DSP::ChebyshevBiquad sut;
     constexpr size_t FirstOctave = 2;
@@ -118,8 +108,8 @@ int main(int ac, char* av[])
 
     for (size_t order = 2, index = 0; order <= 10; order += 2, ++index)
     {
-        x.push_back(std::vector<float>());
-        y.push_back(std::vector<float>());
+        x.emplace_back(std::vector<float>());
+        y.emplace_back(std::vector<float>());
         sut.setSampleRate(48000.f);
         sut.computeType1(order, 1000.f, 3, false);
         for (auto& hz : frequencies)

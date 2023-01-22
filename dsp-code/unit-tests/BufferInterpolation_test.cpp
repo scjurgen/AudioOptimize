@@ -8,6 +8,9 @@
 #include <cmath>
 #include <numbers>
 
+namespace DspTest
+{
+
 TEST(DspBufferInterpolationTest, valuesCheck)
 {
     std::array<float, 5> a{1, 0, 1, 0, 1};
@@ -37,4 +40,5 @@ TEST(DspBufferInterpolationTest, optimizedValuesCheck)
     EXPECT_FLOAT_EQ(result, 0.61458331);
     result = DSP::bspline_43x(a.data(), 1.f);
     EXPECT_FLOAT_EQ(result, 2.f / 3.f);
+}
 }

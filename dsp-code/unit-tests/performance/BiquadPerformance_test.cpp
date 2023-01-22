@@ -10,6 +10,9 @@
 #include <cmath>
 #include <numbers>
 
+namespace DspPerformanceTest
+{
+
 TEST(BiquadPerformanceTest, performance)
 {
     constexpr size_t seconds = 120;
@@ -133,4 +136,5 @@ TEST(BiquadPerformanceTest, compareOlder)
         std::cout << " (doing better)" << std::endl;
     }
     std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+}
 }

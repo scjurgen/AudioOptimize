@@ -8,6 +8,9 @@
 #include <cmath>
 #include <numbers>
 
+namespace DspTest
+{
+
 static constexpr double maxDeltaDb =
     0.05; // N.B.: be hard on the quality of Biquads filters, acceptable would be even +-0.5 dB
 
@@ -883,4 +886,5 @@ TEST(DISABLED_DspBiquadFilterTest, coefficientTables)
     sut.printCoefficients();
     sut.computeType2(10, 1000, 3, false);
     sut.printCoefficients();
+}
 }

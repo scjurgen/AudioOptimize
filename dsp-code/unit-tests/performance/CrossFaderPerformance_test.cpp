@@ -8,7 +8,7 @@
 #include <array>
 #include <chrono>
 
-namespace DspTest
+namespace DspPerformanceTest
 {
 
 TEST(CrossFaderPerformanceTest, performance)
@@ -27,8 +27,10 @@ TEST(CrossFaderPerformanceTest, performance)
     for (size_t j = 0; j < numBlocks; ++j)
     {
         source[0] = 1.f;
-        sut.processBlock(source.data(), 128);
+        sut.reset(128);
+        sut.processBlock(source.data(), source.data(), source.data(), 128);
     }
+    EXPECT_NE(source[0], 0);
     auto stop = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
@@ -49,16 +51,14 @@ TEST(CrossFaderPerformanceTest, compareOlder)
     class SUTBase
     {
       public:
-        SUTBase()
-            : sut
-        {
-        }
+        SUTBase() {}
         void process()
         {
             for (size_t i = 0; i < iterationsPerProcess; ++i)
             {
                 m_data[0] = 1.f;
-                sut.processBlock(m_data.data(), m_data.size());
+                sut.reset(m_data.size());
+                sut.processBlock(m_data.data(), m_data.data(), m_data.data(), m_data.size());
                 EXPECT_NE(m_data[0], 0);
             }
             m_samplesProcessed += iterationsPerProcess * m_data.size();
@@ -70,7 +70,7 @@ TEST(CrossFaderPerformanceTest, compareOlder)
         }
 
       private:
-        DSP::CrossFader sut;
+        DSP::CrossFader sut{};
         std::array<float, 1024> m_data{};
         size_t m_samplesProcessed{0};
     };
@@ -78,18 +78,15 @@ TEST(CrossFaderPerformanceTest, compareOlder)
     class SUTOptimized
     {
       public:
-        SUTOptimized()
-            : sut(48000.f)
-        {
-            sut.setCutoff(12000.f);
-        }
+        SUTOptimized() {}
 
         void process()
         {
             for (size_t i = 0; i < iterationsPerProcess; ++i)
             {
                 m_data[0] = 1.f;
-                sut.processBlock(m_data.data(), m_data.size());
+                sut.reset(m_data.size());
+                sut.processBlock(m_data.data(), m_data.data(), m_data.data(), m_data.size());
                 EXPECT_NE(m_data[0], 0);
             }
             m_samplesProcessed += iterationsPerProcess * m_data.size();
@@ -101,7 +98,7 @@ TEST(CrossFaderPerformanceTest, compareOlder)
         }
 
       private:
-        DSP::CrossFaderOptimized sut;
+        DSP::CrossFaderLinear sut{};
         std::array<float, 1024> m_data{};
         size_t m_samplesProcessed{0};
     };

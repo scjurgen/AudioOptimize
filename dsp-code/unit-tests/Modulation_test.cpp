@@ -5,7 +5,8 @@
 #include <array>
 #include <iostream>
 
-
+namespace DspTest
+{
 TEST(ModulationTest, slowLfo)
 {
     DSP::SlowSineLfo<float> sut{4800.f};
@@ -132,4 +133,5 @@ TEST(ModulationTest, amplitudeAdjust)
         sut.tick();
     }
     EXPECT_NEAR(sut.currentMagnitude(), 0.2, 0.01);
+}
 }

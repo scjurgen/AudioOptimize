@@ -6,6 +6,8 @@
 #include <array>
 #include <iostream>
 
+namespace DspPerformanceTest
+{
 
 class Runner
 {
@@ -120,4 +122,5 @@ TEST(BufferInterpolationPerformanceTest, compareOptimized)
         std::cout << " (doing better)" << std::endl;
     }
     std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+}
 }

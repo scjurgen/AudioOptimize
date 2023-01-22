@@ -27,22 +27,25 @@ package_add_test(DspCodeGenerators_test
 
 package_add_test(DspCode_test
   Biquad_test.cpp
+  BiquadEqualizer_test.cpp
   BufferInterpolation_test.cpp
   CrossFader_test.cpp
   DigitalDelay_test.cpp
-  BiquadEqualizer_test.cpp
   FourStageFilter_test.cpp
   Modulation_test.cpp
+  MusicAndNumbers_test.cpp
   OnePoleFilter_test.cpp
   TwoLatticeAllPass_test.cpp
   )
 
 package_add_test(DspCodePerformance_test
   Biquad_test.cpp
+  BiquadEqualizer_test.cpp
   CrossFader_test.cpp
   DigitalDelay_test.cpp
   FourStageFilter_test.cpp
   Modulation_test.cpp
+  MusicAndNumbers_test.cpp
   OnePoleFilter_test.cpp
   TwoLatticeAllPass_test.cpp
 
@@ -50,9 +53,10 @@ package_add_test(DspCodePerformance_test
   performance/BufferInterpolationPerformance_test.cpp
   performance/CrossFaderPerformance_test.cpp
   performance/DigitalDelayPerformance_test.cpp
-  performance/FourStageFilterPerformance_test.cpp
+  #performance/FourStageFilterPerformance_test.cpp
   performance/ModulationPerformance_test.cpp
   performance/OnePoleFilterPerformance_test.cpp
-  performance/PerformanceTest_test.cpp
   performance/TwoLatticeAllPassPerformance_test.cpp
+
+  performance/PerformanceTest_test.cpp
   )

@@ -8,6 +8,8 @@
 #include <random>
 #include <thread>
 
+namespace DspPerformanceTest
+{
 /*
  * we need a process that just burns data. In this way we can run two threads in parallel that will (hopefully)
  * be sliced similarly when running the performance test
@@ -124,4 +126,38 @@ class TestCompare
         iterationsBase = baseThread.get();
         iterationsCompare = compareThread.get();
     }
+
+    void runSingleTest(std::function<void()> baseRunner, std::function<void()> optimizedRunner,
+                       uint64_t itemsForOneRound)
+    {
+        auto baseThread = std::async(&TestCompare::base, this, baseRunner, itemsForOneRound);
+        auto compareThread = std::async(&TestCompare::compare, this, optimizedRunner, itemsForOneRound);
+        m_iterationsBase = baseThread.get();
+        m_iterationsCompare = compareThread.get();
+    }
+
+    void printResult(uint64_t samplesProcessed, float seconds, float sampleRate)
+    {
+        auto deltaPercent = m_iterationsCompare * 100 / m_iterationsBase;
+        std::cout << "Base: " << m_iterationsBase << " Optimized: " << m_iterationsCompare;
+        std::cout << " r: " << deltaPercent << "%";
+        if (deltaPercent < 97)
+        {
+            std::cout << " (\033[01;31mdoing worse\033[0m)" << std::endl;
+        }
+        else if (deltaPercent > 103)
+        {
+            std::cout << " (\033[01;32mdoing better\033[0m)" << std::endl;
+        }
+        else
+        {
+            std::cout << " (\033[01;36mnot really a big difference\033[0m)" << std::endl;
+        }
+        std::cout << "Local speed factor: " << samplesProcessed / sampleRate / seconds << " blocks/second (block ~"
+                  << sampleRate << " samples)" << std::endl;
+    }
+
+    uint64_t m_iterationsBase;
+    uint64_t m_iterationsCompare;
 };
+}

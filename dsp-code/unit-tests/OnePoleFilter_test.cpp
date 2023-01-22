@@ -5,7 +5,8 @@
 #include "OnePoleFilter.h"
 
 #include <chrono>
-
+namespace DspTest
+{
 class OnePoleFilterTest : public testing::TestWithParam<std::tuple<double, double>>
 {
 };
@@ -59,4 +60,5 @@ TEST(OnePoleFilterTest, testAdaption)
     lp.setCutoff(1000);
     lp.processBlock(source.data(), 128);
     EXPECT_FLOAT_EQ(source[0], 0);
+}
 }

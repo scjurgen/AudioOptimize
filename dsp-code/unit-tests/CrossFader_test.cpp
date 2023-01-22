@@ -8,9 +8,12 @@
 #include <cmath>
 #include <numbers>
 
+namespace DspTest
+{
 
 TEST(CrossFaderTest, rendersCorrectly)
 {
     DSP::CrossFader sut{};
+}
 
 }

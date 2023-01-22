@@ -8,7 +8,8 @@
 #include <cmath>
 #include <numbers>
 
-
+namespace DspTest
+{
 TEST(TwoLatticeAllPassTest, delayedValues)
 {
     std::array<float, 512> source{};
@@ -84,4 +85,5 @@ TEST(TwoLatticeAllPassTest, withLowPass)
     EXPECT_GT(target[211], 0.05);
     EXPECT_LT(target[280], -0.02);
     EXPECT_LT(target[281], -0.02);
+}
 }

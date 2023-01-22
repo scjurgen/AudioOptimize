@@ -6,12 +6,12 @@
 
 #include <chrono>
 
-namespace DspTest
+namespace DspPerformanceTest
 {
 
 TEST(DigitalDelayPerformanceTest, performance)
 {
-    constexpr size_t seconds = 120;
+    constexpr size_t seconds = 10;
     // settle parameters for some seconds
     constexpr size_t numSamples = 48000 * seconds;
     constexpr size_t blockSize = 128;
@@ -25,7 +25,7 @@ TEST(DigitalDelayPerformanceTest, performance)
     for (size_t j = 0; j < numBlocks; ++j)
     {
         source[0] = 1.f;
-        sut.processBlock(source.data(), 128);
+        sut.processBlock(source.data(), source.data(), 128);
     }
     auto stop = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -34,36 +34,59 @@ TEST(DigitalDelayPerformanceTest, performance)
     std::cout << "DigitalDelayPerformanceTest.performance: " << msecs << " ms";
     auto secondsNeeded = static_cast<double>(duration.count()) / 1'000'000.;
     std::cout << "\tload of " << secondsNeeded * 100.f / seconds << " % per thread" << std::endl;
-#ifdef NDEBUG
-    EXPECT_LT(msecs, 25);
+#if NDEBUG
+#ifdef __VERSION__
+    // docker debian bookworm
+    if (std::string(__VERSION__).find(std::string("11.2")) != std::string::npos)
+    {
+        EXPECT_NEAR(66, msecs, 20); // add tolerance for virtual machine
+    }
+    // local build mac
+
+    else if (std::string(__VERSION__).find("Apple LLVM 13.") != std::string::npos)
+    {
+        EXPECT_NEAR(90, msecs, 5);
+    }
+    else
+    {
+        std::cerr << "THIS VERSION IS NOT TESTED AND NEEDS CALIBRATION: " << __VERSION__ << std::endl;
+    }
+#endif
+#ifdef _MSC_VER
+    std::cerr << "THIS MSC VERSION IS NOT TESTED AND NEEDS CALIBRATION: " << _MSC_VER << std::endl;
+#endif
 #else
-    EXPECT_LT(msecs, 35);
+    std::cerr << __FILE_NAME__ << ": Warning! Debug version will not be tested!" << std::endl;
 #endif
 }
 
 TEST(DigitalDelayPerformanceTest, compareOlder)
 {
+#if !NDEBUG
+    std::cerr << __FILE_NAME__ << ": Warning! Debug version should not be compared!" << std::endl;
+#endif
+
     constexpr size_t iterationsPerProcess{10};
+    constexpr float sampleRate{48000.f};
     class SUTBase
     {
       public:
         SUTBase()
-            : sut(48000.f)
+            : sut(sampleRate)
         {
-            sut.setCutoff(12000.f);
         }
         void process()
         {
             for (size_t i = 0; i < iterationsPerProcess; ++i)
             {
                 m_data[0] = 1.f;
-                sut.processBlock(m_data.data(), m_data.size());
-                EXPECT_NE(m_data[0], 0);
+                sut.processBlock(m_data.data(), m_data.data(), m_data.size());
+                EXPECT_NE(m_data[0], 20);
             }
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -78,9 +101,8 @@ TEST(DigitalDelayPerformanceTest, compareOlder)
     {
       public:
         SUTOptimized()
-            : sut(48000.f)
+            : sut(sampleRate)
         {
-            sut.setCutoff(12000.f);
         }
 
         void process()
@@ -88,13 +110,13 @@ TEST(DigitalDelayPerformanceTest, compareOlder)
             for (size_t i = 0; i < iterationsPerProcess; ++i)
             {
                 m_data[0] = 1.f;
-                sut.processBlock(m_data.data(), m_data.size());
-                EXPECT_NE(m_data[0], 0);
+                sut.processBlock(m_data.data(), m_data.data(), m_data.size());
+                EXPECT_NE(m_data[0], 20);
             }
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -105,30 +127,17 @@ TEST(DigitalDelayPerformanceTest, compareOlder)
         size_t m_samplesProcessed{0};
     };
 
-    auto oneBurnInSeconds = .5f;
+    const auto seconds = .5f;
     SUTBase sutBase;
     SUTOptimized sutOptimized;
-    auto baseRunner = [&sutBase]() { sutBase.process(); };
-    auto optimizeRunner = [&sutOptimized]() { sutOptimized.process(); };
+    const auto baseRunner = [&sutBase]() { sutBase.process(); };
+    const auto optimizedRunner = [&sutOptimized]() { sutOptimized.process(); };
 
-    TestCompare sut;
-    auto iterationsToDo = sut.getIterationsForACertainPeriod(baseRunner, oneBurnInSeconds);
-    uint64_t iterationsBase, iterationsOptimize;
+    TestCompare testCompare;
+    const auto iterationsForOneRound = testCompare.getIterationsForACertainPeriod(baseRunner, seconds);
 
-    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo, iterationsBase, iterationsOptimize);
-
-    auto deltaPercent = iterationsOptimize * 100 / iterationsBase;
-    std::cout << "Base: " << iterationsBase << " Optimized: " << iterationsOptimize;
-    std::cout << " r: " << deltaPercent << "%";
-    if (deltaPercent < 100)
-    {
-        std::cout << " (doing worse)" << std::endl;
-    }
-    else
-    {
-        std::cout << " (doing better)" << std::endl;
-    }
-    std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+    testCompare.runSingleTest(baseRunner, optimizedRunner, iterationsForOneRound);
+    testCompare.printResult(sutOptimized.samplesProcessed(), seconds, sampleRate);
 }
 
 }

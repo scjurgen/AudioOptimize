@@ -6,7 +6,7 @@
 
 #include <chrono>
 
-namespace DspTest
+namespace DspPerformanceTest
 {
 
 TEST(OnePoleFilterPerformanceTest, performance)
