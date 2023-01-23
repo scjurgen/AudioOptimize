@@ -27,6 +27,10 @@ processor architecture) and parallel running tests of the original and optimized
 to lower the probability that other processes interfere with our test, because the scheduler will interrupt our 2 running
 tests in the same moment and then pick up our processes again. IO related task should then have less influence.
 
+For more information refer to the [README.md](dsp-code/unit-tests/performance/README.md) in 
+the [dsp-code/unit-tests/performance](dsp-code/unit-tests/performance) folder.
+
+
 # improving tactics
 
 There are various tactics that can be used
@@ -36,6 +40,13 @@ There are various tactics that can be used
 - reorganize code blocks (example biquad filter)
 
 
+# Todo
+
+- [ ] cleanup all tests
+- [ ] add valgrind DockerFile
+- [ ] check with MSVC 
+- [ ] Document all tests and relative optimisations
+- [ ] Remove unused Modules
 
 
 
