@@ -42,10 +42,9 @@ TEST(DigitalDelayPerformanceTest, performance)
         EXPECT_NEAR(66, msecs, 20); // add tolerance for virtual machine
     }
     // local build mac
-
-    else if (std::string(__VERSION__).find("Apple LLVM 13.") != std::string::npos)
+    else if (std::string(__VERSION__).find("Apple LLVM 14.") != std::string::npos)
     {
-        EXPECT_NEAR(90, msecs, 5);
+        EXPECT_NEAR(25, msecs, 5);
     }
     else
     {
@@ -86,7 +85,7 @@ TEST(DigitalDelayPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed() const
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -116,7 +115,7 @@ TEST(DigitalDelayPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed() const
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }

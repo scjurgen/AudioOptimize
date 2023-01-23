@@ -115,10 +115,6 @@ template <typename T>
 class SlowSineLfo
 {
   public:
-    // Chamberlin state variable filter
-    // only two multiplications and additions per tick
-    // don't use values faster than 1/6th of samplerate (e.g. 10000hz @ 48kHz)
-    // best suited for low frequencies (e.g. <100hz @ 48kHz)
     explicit SlowSineLfo(const float sampleRate)
         : m_sampleRate(sampleRate)
     {

@@ -45,11 +45,12 @@ TEST(OnePoleFilterPerformanceTest, performance)
 TEST(OnePoleFilterPerformanceTest, compareOlder)
 {
     constexpr size_t iterationsPerProcess{10};
+    constexpr float sampleRate{48000.f};
     class SUTBase
     {
       public:
         SUTBase()
-            : sut(48000.f)
+            : sut(sampleRate)
         {
             sut.setCutoff(12000.f);
         }
@@ -64,7 +65,7 @@ TEST(OnePoleFilterPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -79,7 +80,7 @@ TEST(OnePoleFilterPerformanceTest, compareOlder)
     {
       public:
         SUTOptimized()
-            : sut(48000.f)
+            : sut(sampleRate)
         {
             sut.setCutoff(12000.f);
         }
@@ -95,7 +96,7 @@ TEST(OnePoleFilterPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -116,20 +117,8 @@ TEST(OnePoleFilterPerformanceTest, compareOlder)
     auto iterationsToDo = sut.getIterationsForACertainPeriod(baseRunner, oneBurnInSeconds);
     uint64_t iterationsBase, iterationsOptimize;
 
-    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo, iterationsBase, iterationsOptimize);
-
-    auto deltaPercent = iterationsOptimize * 100 / iterationsBase;
-    std::cout << "Base: " << iterationsBase << " Optimized: " << iterationsOptimize;
-    std::cout << " r: " << deltaPercent << "%";
-    if (deltaPercent < 100)
-    {
-        std::cout << " (doing worse)" << std::endl;
-    }
-    else
-    {
-        std::cout << " (doing better)" << std::endl;
-    }
-    std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo);
+    sut.printResult(sutOptimized.samplesProcessed(), oneBurnInSeconds, sampleRate);
 }
 
 }

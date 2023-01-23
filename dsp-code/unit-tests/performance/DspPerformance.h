@@ -139,22 +139,26 @@ class TestCompare
     void printResult(uint64_t samplesProcessed, float seconds, float sampleRate)
     {
         auto deltaPercent = m_iterationsCompare * 100 / m_iterationsBase;
-        std::cout << "Base: " << m_iterationsBase << " Optimized: " << m_iterationsCompare;
-        std::cout << " r: " << deltaPercent << "%";
+        std::cout << "Baseline:   " << m_iterationsBase << " iterations (in " << seconds << " secs.)\n";
+        std::cout << "Optimized:  " << m_iterationsCompare << " iterations\n";
+        std::cout << "Difference: " << deltaPercent << "%";
         if (deltaPercent < 97)
         {
-            std::cout << " (\033[01;31mdoing worse\033[0m)" << std::endl;
+            std::cout << " (\033[01;31mdoing worse\033[0m)\n";
         }
         else if (deltaPercent > 103)
         {
-            std::cout << " (\033[01;32mdoing better\033[0m)" << std::endl;
+            std::cout << " (\033[01;32mdoing better\033[0m)\n";
         }
         else
         {
-            std::cout << " (\033[01;36mnot really a big difference\033[0m)" << std::endl;
+            std::cout << " (\033[01;36mnot really a big difference\033[0m)\n";
         }
-        std::cout << "Local speed factor: " << samplesProcessed / sampleRate / seconds << " blocks/second (block ~"
-                  << sampleRate << " samples)" << std::endl;
+        std::cout << "Local speed factor: " << samplesProcessed / sampleRate / seconds;
+        std::cout << " blocks/second (1 block equals " << sampleRate << " samples)\n" << std::endl;
+#ifndef NDEBUG
+        std::cout << " (\033[01;31mWARNING! You are testing the DEBUG version!\033[0m)\n";
+#endif
     }
 
     uint64_t m_iterationsBase;

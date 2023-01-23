@@ -8,6 +8,10 @@
 namespace DspPerformanceTest
 {
 
+
+// this tests the effectiveness of the performance test
+// it is NOT a test of correctness in itself
+
 TEST(DSP_PerformanceTest_tests, basicsTestsVariations)
 {
     class SUT
@@ -50,11 +54,6 @@ TEST(DSP_PerformanceTest_tests, basicsTestsVariations)
         sut.runSingleTest(baseRunner, compareRunner, iterationsToDo, iterationsBase, iterationsCompare);
 
         auto deltaPercent = iterationsCompare * 100 / iterationsBase;
-        // std::cout << "Base: " << iterationsBase << " Compare: " << iterationsCompare;
-        // std::cout << " r: " << deltaPercent << "% vs:" << multiplicationsBase * 100 / multiplications
-        //           << " err permitted: " << 10 * 5 / multiplications << std::endl;
-        //  auto shouldBeGreaterThen = multiplicationsBase * 100 / multiplications;
-        //  as our multiplications in the runner are faster the error will be greater (doesn't scale linear)
         EXPECT_NEAR(deltaPercent, multiplicationsBase * 100 / multiplications, 10 * 5 / multiplications);
     }
 }

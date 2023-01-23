@@ -70,7 +70,7 @@ TEST(BiquadPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -101,7 +101,7 @@ TEST(BiquadPerformanceTest, compareOlder)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -122,19 +122,7 @@ TEST(BiquadPerformanceTest, compareOlder)
     auto iterationsToDo = sut.getIterationsForACertainPeriod(baseRunner, oneBurnInSeconds);
     uint64_t iterationsBase, iterationsOptimize;
 
-    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo, iterationsBase, iterationsOptimize);
-
-    auto deltaPercent = iterationsOptimize * 100 / iterationsBase;
-    std::cout << "Base: " << iterationsBase << " Optimized: " << iterationsOptimize;
-    std::cout << " r: " << deltaPercent << "%";
-    if (deltaPercent < 100)
-    {
-        std::cout << " (doing worse)" << std::endl;
-    }
-    else
-    {
-        std::cout << " (doing better)" << std::endl;
-    }
-    std::cout << "Local speed factor: " << sutOptimized.samplesProcessed() / 48000.f / oneBurnInSeconds << std::endl;
+    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo);
+    sut.printResult(sutOptimized.samplesProcessed(), oneBurnInSeconds, 48000.f);
 }
 }

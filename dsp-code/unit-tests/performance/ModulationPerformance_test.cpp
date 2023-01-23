@@ -63,7 +63,7 @@ TEST(ModulationPerformanceTest, compareOptimized)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -94,7 +94,7 @@ TEST(ModulationPerformanceTest, compareOptimized)
             m_samplesProcessed += iterationsPerProcess * m_data.size();
         }
 
-        size_t samplesProcessed()
+        [[nodiscard]] size_t samplesProcessed() const
         {
             return m_samplesProcessed;
         }
@@ -115,7 +115,8 @@ TEST(ModulationPerformanceTest, compareOptimized)
     auto iterationsToDo = sut.getIterationsForACertainPeriod(baseRunner, oneBurnInSeconds);
     uint64_t iterationsBase, iterationsOptimize;
 
-    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo, iterationsBase, iterationsOptimize);
+    sut.runSingleTest(baseRunner, optimizeRunner, iterationsToDo);
+    sut.printResult(sutOptimized.samplesProcessed(), oneBurnInSeconds, 48000.f);
 
     auto deltaPercent = iterationsOptimize * 100 / iterationsBase;
     std::cout << "Base: " << iterationsBase << " Optimized: " << iterationsOptimize;
