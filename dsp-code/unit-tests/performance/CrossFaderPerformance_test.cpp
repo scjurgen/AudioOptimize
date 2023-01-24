@@ -71,7 +71,7 @@ TEST(CrossFaderPerformanceTest, compareOlder)
         }
 
       private:
-        DSP::CrossFaderChamberlinStepper sut{};
+        DSP::CrossFaderTable sut{};
         std::array<float, 1024> m_data{};
         size_t m_samplesProcessed{0};
     };
